@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>EduVerse Nusantara Adventure 🌍✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Fredoka', sans-serif; min-height: 100vh; background: #0f0c29; overflow-x: hidden; }
+  
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); border-radius: 10px; }
+
+  /* Screens */
+  .screen { display: none; min-height: 100vh; width: 100%; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* Particles */
+  #particles { position: fixed; top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden; }
+  .particle { position: absolute; border-radius: 50%; animation: float-particle linear infinite; opacity: 0.5; }
+  @keyframes float-particle { 0%{transform:translateY(100vh) rotate(0deg);opacity:0;} 10%{opacity:0.6;} 90%{opacity:0.4;} 100%{transform:translateY(-20px) rotate(720deg);opacity:0;} }
+
+  /* Splash */
+  #splash { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); justify-content: center; align-items: center; text-align: center; }
+  .logo-bounce { animation: logoBounce 2s ease-in-out infinite; }
+  @keyframes logoBounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
+  .glow-text { text-shadow: 0 0 30px rgba(100,200,255,0.8), 0 0 60px rgba(100,200,255,0.4); }
+  .planet { animation: rotatePlanet 20s linear infinite; }
+  @keyframes rotatePlanet { from{transform:rotate(0deg) translateX(80px) rotate(0deg);} to{transform:rotate(360deg) translateX(80px) rotate(-360deg);} }
+  .float-icon { animation: floatAnim 3s ease-in-out infinite; }
+  @keyframes floatAnim { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-10px);} }
+  .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+  @keyframes pulseGlow { 0%,100%{box-shadow:0 0 20px rgba(99,102,241,0.5);} 50%{box-shadow:0 0 40px rgba(99,102,241,0.9), 0 0 80px rgba(99,102,241,0.4);} }
+
+  /* Glass card */
+  .glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); }
+  .glass-dark { background: rgba(0,0,0,0.3); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.15); }
+
+  /* Buttons */
+  .btn-primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; cursor: pointer; transition: all 0.3s; }
+  .btn-primary:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 30px rgba(99,102,241,0.5); }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-secondary { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; cursor: pointer; transition: all 0.3s; }
+  .btn-secondary:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 30px rgba(16,185,129,0.5); }
+  .btn-warn { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; cursor: pointer; transition: all 0.3s; }
+  .btn-warn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 30px rgba(245,158,11,0.5); }
+
+  /* Avatar card */
+  .avatar-card { transition: all 0.3s; cursor: pointer; }
+  .avatar-card:hover { transform: scale(1.05) translateY(-5px); }
+  .avatar-card.selected { box-shadow: 0 0 0 3px #6366f1, 0 0 20px rgba(99,102,241,0.6); }
+
+  /* Class card */
+  .class-card { transition: all 0.3s; cursor: pointer; }
+  .class-card:hover { transform: scale(1.05) translateY(-4px); }
+  .class-card.selected { box-shadow: 0 0 0 3px #10b981, 0 0 20px rgba(16,185,129,0.6); }
+
+  /* Subject card */
+  .subject-card { transition: all 0.3s; cursor: pointer; }
+  .subject-card:hover { transform: scale(1.04) translateY(-4px); }
+
+  /* Material card */
+  .material-card { transition: all 0.3s; cursor: pointer; }
+  .material-card:hover { transform: scale(1.03) translateY(-3px); }
+
+  /* Mode card */
+  .mode-card { transition: all 0.3s; cursor: pointer; }
+  .mode-card:hover { transform: scale(1.04) translateY(-4px); }
+
+  /* Quiz */
+  .answer-btn { transition: all 0.3s; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); }
+  .answer-btn:hover { transform: translateX(5px); border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.15); }
+  .answer-btn.correct { background: linear-gradient(135deg, #10b981, #059669) !important; border-color: #10b981 !important; transform: scale(1.02); }
+  .answer-btn.wrong { background: linear-gradient(135deg, #ef4444, #dc2626) !important; border-color: #ef4444 !important; animation: shake 0.5s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-8px);} 40%{transform:translateX(8px);} 60%{transform:translateX(-5px);} 80%{transform:translateX(5px);} }
+  .progress-bar { background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899); transition: width 0.5s ease; border-radius: 999px; }
+
+  /* Score screen */
+  .badge-item { transition: all 0.3s; }
+  .badge-item.earned { animation: badgePop 0.5s ease; }
+  @keyframes badgePop { 0%{transform:scale(0);} 70%{transform:scale(1.2);} 100%{transform:scale(1);} }
+
+  /* XP bar */
+  .xp-fill { background: linear-gradient(90deg, #f59e0b, #ef4444); transition: width 1s ease; border-radius: 999px; }
+
+  /* Heart life */
+  .heart-life { color: #ef4444; font-size: 1.4rem; transition: all 0.3s; }
+  .heart-life.lost { color: rgba(255,255,255,0.2); }
+
+  /* Leaderboard */
+  .lb-row:nth-child(1) .lb-rank { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .lb-row:nth-child(2) .lb-rank { background: linear-gradient(135deg, #9ca3af, #6b7280); }
+  .lb-row:nth-child(3) .lb-rank { background: linear-gradient(135deg, #cd7c2f, #a16207); }
+
+  /* Drag & Drop */
+  .drag-item { cursor: grab; user-select: none; transition: all 0.2s; }
+  .drag-item:active { cursor: grabbing; transform: scale(1.05); }
+  .drag-item.dragging { opacity: 0.5; }
+  .drop-zone { border: 2px dashed rgba(255,255,255,0.4); transition: all 0.2s; min-height: 50px; }
+  .drop-zone.drag-over { border-color: #6366f1; background: rgba(99,102,241,0.2); }
+  .drop-zone.filled { border-style: solid; border-color: #10b981; background: rgba(16,185,129,0.15); }
+
+  /* Materi screen */
+  .materi-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; }
+
+  /* Certificate */
+  .cert-border { border: 4px solid #f59e0b; box-shadow: 0 0 30px rgba(245,158,11,0.4), inset 0 0 30px rgba(245,158,11,0.05); }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .grid-2 { grid-template-columns: 1fr 1fr !important; }
+    .grid-3 { grid-template-columns: 1fr 1fr !important; }
+  }
+
+  /* Smooth transition */
+  .screen-enter { animation: screenEnter 0.4s ease; }
+  @keyframes screenEnter { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+  /* Home FAB Button */
+  .home-fab { position: fixed; bottom: 24px; right: 20px; z-index: 999; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg,#6366f1,#8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; box-shadow: 0 4px 20px rgba(99,102,241,0.6); border: 2px solid rgba(255,255,255,0.3); transition: all 0.3s; }
+  .home-fab:hover { transform: scale(1.12); box-shadow: 0 6px 30px rgba(99,102,241,0.9); }
+  .home-fab:active { transform: scale(0.95); }
+
+  /* Modal overlay */
+  .modal-overlay { position: fixed; inset:0; z-index:9998; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:1rem; }
+  .modal-box { background:linear-gradient(135deg,#1e1b4b,#312e81); border:1px solid rgba(255,255,255,0.2); border-radius:24px; padding:1.5rem; width:100%; max-width:380px; animation:modalPop 0.3s ease; }
+  @keyframes modalPop { from{opacity:0;transform:scale(0.85) translateY(20px);} to{opacity:1;transform:scale(1) translateY(0);} }
+
+  /* Ganti nama badge on HUD */
+  .btn-reset { background:linear-gradient(135deg,#f43f5e,#e11d48); color:white; border:none; cursor:pointer; transition:all 0.3s; }
+  .btn-reset:hover { transform:scale(1.04); box-shadow:0 6px 20px rgba(244,63,94,0.5); }
+</style>
+</head>
+<body>
+
+<!-- Floating Particles -->
+<div id="particles"></div>
+
+<!-- HOME FAB -->
+<div id="homeFab" class="home-fab hidden" onclick="confirmGoHome()" title="Kembali ke Beranda">
+  <i class="fas fa-home"></i>
+</div>
+
+<!-- MODAL: Konfirmasi Kembali ke Beranda -->
+<div id="modalHome" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="text-center mb-4">
+      <div class="text-4xl mb-2">🏠</div>
+      <h3 class="text-white text-xl font-bold">Kembali ke Beranda?</h3>
+      <p class="text-sm mt-1" style="color:rgba(255,255,255,0.7);">Progress kuis saat ini akan hilang. Tetap lanjut?</p>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="closeModal('modalHome')" class="flex-1 rounded-xl py-3 font-bold text-white glass hover:bg-white hover:bg-opacity-10 transition-all">
+        <i class="fas fa-times mr-1"></i> Batal
+      </button>
+      <button onclick="goHome()" class="flex-1 btn-primary rounded-xl py-3 font-bold text-white">
+        <i class="fas fa-home mr-1"></i> Ya, Pulang!
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Ganti Nama Siswa -->
+<div id="modalReset" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="text-center mb-4">
+      <div class="text-4xl mb-2">✏️</div>
+      <h3 class="text-white text-xl font-bold">Ganti Nama Siswa</h3>
+      <p class="text-sm mt-1" style="color:rgba(255,255,255,0.7);">Masukkan nama siswa berikutnya</p>
+    </div>
+    <input id="newNameInput" type="text" placeholder="Nama siswa baru..." maxlength="20"
+      class="w-full rounded-xl px-4 py-3 text-lg font-medium text-white outline-none mb-3"
+      style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.3);">
+    <div class="mb-4">
+      <p class="text-white text-sm font-semibold mb-2">Pilih Avatar</p>
+      <div class="grid grid-cols-6 gap-2" id="resetAvatarGrid"></div>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="closeModal('modalReset')" class="flex-1 rounded-xl py-3 font-bold text-white glass hover:bg-white hover:bg-opacity-10 transition-all">
+        <i class="fas fa-times mr-1"></i> Batal
+      </button>
+      <button onclick="applyReset()" class="flex-1 btn-reset rounded-xl py-3 font-bold">
+        <i class="fas fa-user-edit mr-1"></i> Ganti!
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SPLASH SCREEN ========== -->
+<div id="splash" class="screen active">
+  <div class="relative z-10 flex flex-col items-center justify-center min-h-screen w-full px-4 py-12">
+    <!-- Planet Orbit -->
+    <div class="relative w-40 h-40 flex items-center justify-center mb-6">
+      <div class="w-28 h-28 rounded-full flex items-center justify-center text-5xl logo-bounce" style="background:linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899); box-shadow:0 0 60px rgba(99,102,241,0.7);">
+        🌍
+      </div>
+      <div class="absolute inset-0 rounded-full border-2 border-dashed border-purple-400 opacity-50" style="animation:rotatePlanet 8s linear infinite reverse;"></div>
+      <div class="absolute float-icon" style="top:-10px;right:10px;font-size:1.8rem;">✨</div>
+      <div class="absolute float-icon" style="bottom:-10px;left:10px;font-size:1.6rem;animation-delay:1s;">📚</div>
+      <div class="absolute float-icon" style="top:10px;left:-15px;font-size:1.4rem;animation-delay:0.5s;">🔭</div>
+    </div>
+
+    <h1 class="text-4xl md:text-5xl font-bold text-white glow-text mb-2 text-center leading-tight">
+      EduVerse
+    </h1>
+    <h2 class="text-2xl md:text-3xl font-semibold text-center mb-1" style="color:#a78bfa;">Nusantara Adventure</h2>
+    <p class="text-base text-center mb-8" style="color:#93c5fd;">🎮 Game Edukasi SD Kurikulum Merdeka 🎮</p>
+
+    <!-- Floating icons row -->
+    <div class="flex gap-5 mb-10">
+      <div class="float-icon text-3xl" style="animation-delay:0s;">🔢</div>
+      <div class="float-icon text-3xl" style="animation-delay:0.3s;">🌱</div>
+      <div class="float-icon text-3xl" style="animation-delay:0.6s;">🎨</div>
+      <div class="float-icon text-3xl" style="animation-delay:0.9s;">🇮🇩</div>
+      <div class="float-icon text-3xl" style="animation-delay:1.2s;">🌍</div>
+    </div>
+
+    <button onclick="goTo('profile')" class="btn-primary pulse-glow text-xl font-bold rounded-2xl px-10 py-4 relative z-10">
+      <i class="fas fa-rocket mr-2"></i> Mulai Petualangan!
+    </button>
+
+    <div id="splashQuickReset" class="hidden mt-5 w-full max-w-xs">
+      <div class="glass rounded-2xl px-4 py-3 flex items-center gap-3">
+        <span class="text-2xl" id="splashAvatarEmoji">🧑‍🚀</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-white font-semibold truncate" id="splashPlayerName">-</p>
+          <p class="text-xs" style="color:rgba(255,255,255,0.5);">Pemain aktif</p>
+        </div>
+        <button onclick="openResetModal()" class="btn-reset rounded-xl px-3 py-2 text-sm font-bold flex-shrink-0">
+          <i class="fas fa-user-edit mr-1"></i> Ganti
+        </button>
+      </div>
+    </div>
+
+    <p class="mt-5 text-sm" style="color:rgba(255,255,255,0.4);">© 2026 EduVerse Nusantara · Riyan Nur Ichsan · Syarifah Nanda · Nabila Nur</p>
+  </div>
+</div>
+
+<!-- ========== PROFILE / AVATAR SCREEN ========== -->
+<div id="profile" class="screen" style="background:linear-gradient(135deg,#1e1b4b,#312e81,#1e1b4b);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 pb-24 overflow-y-auto min-h-screen">
+    <h2 class="text-3xl font-bold text-white text-center mb-1">👤 Buat Profilmu</h2>
+    <p class="text-center mb-6" style="color:#a5b4fc;">Siapa kamu, petualang?</p>
+
+    <!-- Name input -->
+    <div class="glass rounded-2xl p-4 mb-5">
+      <label class="block text-white font-semibold mb-2"><i class="fas fa-user mr-2"></i>Nama Kamu</label>
+      <input id="playerName" type="text" placeholder="Masukkan namamu..." maxlength="20"
+        class="w-full rounded-xl px-4 py-3 text-lg font-medium text-white outline-none focus:ring-2 focus:ring-purple-400"
+        style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.3);">
+    </div>
+
+    <!-- Avatar selection -->
+    <div class="glass rounded-2xl p-4 mb-5">
+      <p class="text-white font-semibold mb-3"><i class="fas fa-mask mr-2"></i>Pilih Karakter</p>
+      <div class="grid grid-cols-3 gap-3" id="avatarGrid">
+      </div>
+    </div>
+
+    <!-- Gender -->
+    <div class="glass rounded-2xl p-4 mb-5">
+      <p class="text-white font-semibold mb-3"><i class="fas fa-venus-mars mr-2"></i>Jenis Kelamin</p>
+      <div class="flex gap-3">
+        <button onclick="selectGender('laki')" id="genderLaki"
+          class="flex-1 py-3 rounded-xl font-semibold text-white transition-all glass hover:scale-105" style="border:2px solid rgba(255,255,255,0.3);">
+          👦 Laki-laki
+        </button>
+        <button onclick="selectGender('perempuan')" id="genderPerempuan"
+          class="flex-1 py-3 rounded-xl font-semibold text-white transition-all glass hover:scale-105" style="border:2px solid rgba(255,255,255,0.3);">
+          👧 Perempuan
+        </button>
+      </div>
+    </div>
+
+    <button onclick="confirmProfile()" class="btn-primary w-full text-xl font-bold rounded-2xl py-4">
+      <i class="fas fa-arrow-right mr-2"></i> Lanjut Pilih Kelas
+    </button>
+  </div>
+</div>
+
+<!-- ========== PILIH KELAS ========== -->
+<div id="classSelect" class="screen" style="background:linear-gradient(135deg,#064e3b,#065f46,#047857);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 pb-24 overflow-y-auto min-h-screen">
+    <div class="flex items-center mb-6">
+      <button onclick="goTo('profile')" class="text-white mr-3 hover:scale-110 transition-all text-xl"><i class="fas fa-chevron-left"></i></button>
+      <div>
+        <h2 class="text-3xl font-bold text-white">🏫 Pilih Kelasmu</h2>
+        <p style="color:#6ee7b7;" class="text-sm">Kelas berapa kamu sekarang?</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4" id="classGrid"></div>
+  </div>
+</div>
+
+<!-- ========== PILIH MAPEL ========== -->
+<div id="subjectSelect" class="screen" style="background:linear-gradient(135deg,#1e3a5f,#1e3a8a,#1e40af);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 pb-24 overflow-y-auto min-h-screen">
+    <div class="flex items-center mb-2">
+      <button onclick="goTo('classSelect')" class="text-white mr-3 hover:scale-110 transition-all text-xl"><i class="fas fa-chevron-left"></i></button>
+      <div>
+        <h2 class="text-3xl font-bold text-white">📖 Pilih Mata Pelajaran</h2>
+        <p style="color:#93c5fd;" class="text-sm" id="subjectClassLabel"></p>
+      </div>
+    </div>
+    <!-- Player HUD -->
+    <div id="playerHUD" class="glass rounded-xl px-4 py-2 mb-4 flex items-center gap-3 flex-wrap">
+      <span class="text-white font-semibold" id="hudName">-</span>
+      <span class="text-sm" style="color:#a5b4fc;" id="hudClass">-</span>
+      <span class="ml-auto flex items-center gap-2">
+        <button onclick="openResetModal()" class="btn-reset rounded-lg px-2 py-1 text-xs font-bold" title="Ganti Nama Siswa">
+          <i class="fas fa-user-edit mr-1"></i>Ganti
+        </button>
+        <span class="flex gap-1" id="hudHearts"></span>
+      </span>
+    </div>
+    <div class="grid grid-cols-2 gap-4" id="subjectGrid"></div>
+  </div>
+</div>
+
+<!-- ========== PILIH MATERI ========== -->
+<div id="materiSelect" class="screen" style="background:linear-gradient(135deg,#3b0764,#4c1d95,#5b21b6);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 pb-24 overflow-y-auto min-h-screen">
+    <div class="flex items-center mb-4">
+      <button onclick="goTo('subjectSelect')" class="text-white mr-3 hover:scale-110 transition-all text-xl"><i class="fas fa-chevron-left"></i></button>
+      <div>
+        <h2 class="text-3xl font-bold text-white">📚 Pilih Materi</h2>
+        <p style="color:#c4b5fd;" class="text-sm" id="materiLabel"></p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 gap-3" id="materiGrid"></div>
+  </div>
+</div>
+
+<!-- ========== PILIH MODE ========== -->
+<div id="modeSelect" class="screen" style="background:linear-gradient(135deg,#7c2d12,#92400e,#78350f);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 pb-24 overflow-y-auto min-h-screen">
+    <div class="flex items-center mb-4">
+      <button onclick="goTo('materiSelect')" class="text-white mr-3 hover:scale-110 transition-all text-xl"><i class="fas fa-chevron-left"></i></button>
+      <h2 class="text-3xl font-bold text-white">🎮 Pilih Mode</h2>
+    </div>
+    <div id="modeInfo" class="glass rounded-2xl p-4 mb-5 text-center">
+      <p class="text-white font-semibold text-lg" id="modeInfoText"></p>
+    </div>
+    <div class="grid grid-cols-1 gap-4">
+      <div class="mode-card glass rounded-2xl p-6 text-center" onclick="startLearn()">
+        <div class="text-5xl mb-3">📖</div>
+        <h3 class="text-2xl font-bold text-white mb-1">Mode Belajar</h3>
+        <p style="color:#fde68a;">Pelajari materi dengan penjelasan interaktif, animasi, dan contoh nyata!</p>
+        <div class="mt-3 btn-warn inline-block rounded-xl px-6 py-2 font-semibold text-white cursor-pointer">
+          <i class="fas fa-book-open mr-1"></i> Mulai Belajar
+        </div>
+      </div>
+      <div class="mode-card glass rounded-2xl p-6 text-center" onclick="startQuiz()">
+        <div class="text-5xl mb-3">❓</div>
+        <h3 class="text-2xl font-bold text-white mb-1">Mode Kuis</h3>
+        <p style="color:#fde68a;">Jawab 10 soal acak dan kumpulkan XP, badge, dan skor tertinggi!</p>
+        <div class="flex justify-center gap-2 mt-2 text-sm flex-wrap">
+          <span class="glass rounded-lg px-2 py-1 text-white">10 Soal</span>
+          <span class="glass rounded-lg px-2 py-1 text-white">❤️ 3 Nyawa</span>
+          <span class="glass rounded-lg px-2 py-1 text-white">⭐ XP Bonus</span>
+        </div>
+        <div class="mt-3 btn-primary inline-block rounded-xl px-6 py-2 font-semibold text-white cursor-pointer">
+          <i class="fas fa-gamepad mr-1"></i> Mulai Kuis
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MATERI SCREEN ========== -->
+<div id="materiScreen" class="screen" style="background:linear-gradient(135deg,#0c4a6e,#075985,#0369a1);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 pb-24 overflow-y-auto min-h-screen">
+    <div class="flex items-center mb-4">
+      <button onclick="goTo('modeSelect')" class="text-white mr-3 hover:scale-110 transition-all text-xl"><i class="fas fa-chevron-left"></i></button>
+      <h2 class="text-2xl font-bold text-white" id="materiTitle">Materi</h2>
+    </div>
+    <div id="materiContent"></div>
+    <button onclick="startQuiz()" class="btn-primary w-full text-xl font-bold rounded-2xl py-4 mt-4">
+      <i class="fas fa-gamepad mr-2"></i> Mulai Kuis Sekarang!
+    </button>
+  </div>
+</div>
+
+<!-- ========== QUIZ SCREEN ========== -->
+<div id="quizScreen" class="screen" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-6 pb-24 overflow-y-auto min-h-screen">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+      <div class="flex gap-1" id="quizHearts"></div>
+      <div class="glass rounded-xl px-3 py-1">
+        <span class="text-white font-semibold text-sm">Soal <span id="qNum">1</span>/10</span>
+      </div>
+      <div class="glass rounded-xl px-3 py-1">
+        <span class="text-yellow-400 font-bold text-sm">⭐ <span id="qScore">0</span></span>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="w-full rounded-full mb-5" style="background:rgba(255,255,255,0.15); height:10px;">
+      <div class="progress-bar" id="quizProgress" style="height:10px; width:10%;"></div>
+    </div>
+
+    <!-- Combo indicator -->
+    <div id="comboDisplay" class="text-center mb-2 hidden">
+      <span class="text-yellow-400 font-bold text-lg">🔥 Combo x<span id="comboNum">1</span>!</span>
+    </div>
+
+    <!-- Question -->
+    <div class="glass-dark rounded-2xl p-5 mb-5">
+      <div class="text-xs font-semibold mb-2" style="color:#93c5fd;" id="qType">Pilihan Ganda</div>
+      <p class="text-white text-lg font-semibold leading-relaxed" id="questionText">Loading...</p>
+      <div id="questionImage" class="mt-3 hidden text-5xl text-center"></div>
+    </div>
+
+    <!-- Answers container -->
+    <div id="answersContainer"></div>
+
+    <!-- Next button (hidden until answered) -->
+    <button id="nextBtn" onclick="nextQuestion()" class="btn-secondary w-full text-lg font-bold rounded-2xl py-4 mt-4 hidden">
+      <i class="fas fa-arrow-right mr-2"></i> Soal Berikutnya
+    </button>
+  </div>
+</div>
+
+<!-- ========== SCORE SCREEN ========== -->
+<div id="scoreScreen" class="screen" style="background:linear-gradient(135deg,#1f2937,#111827,#0f172a);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 pb-24 overflow-y-auto min-h-screen">
+    <div class="text-center mb-6">
+      <div id="scoreEmoji" class="text-6xl mb-2">🏆</div>
+      <h2 class="text-4xl font-bold text-white mb-1" id="scoreTitle">Luar Biasa!</h2>
+      <p style="color:#9ca3af;" id="scoreSubtitle">Kamu hebat!</p>
+    </div>
+
+    <!-- Score card -->
+    <div class="glass rounded-2xl p-5 mb-5">
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="glass-dark rounded-xl p-3 text-center">
+          <p class="text-3xl font-bold text-yellow-400" id="finalScore">0</p>
+          <p class="text-sm text-white">Total Skor</p>
+        </div>
+        <div class="glass-dark rounded-xl p-3 text-center">
+          <p class="text-3xl font-bold text-green-400" id="correctCount">0</p>
+          <p class="text-sm text-white">Jawaban Benar</p>
+        </div>
+        <div class="glass-dark rounded-xl p-3 text-center">
+          <p class="text-3xl font-bold text-blue-400" id="earnedXP">0</p>
+          <p class="text-sm text-white">XP Didapat</p>
+        </div>
+        <div class="glass-dark rounded-xl p-3 text-center">
+          <p class="text-3xl font-bold text-purple-400" id="maxCombo">0</p>
+          <p class="text-sm text-white">Max Combo</p>
+        </div>
+      </div>
+
+      <!-- XP bar -->
+      <p class="text-white text-sm mb-1">Level Progress</p>
+      <div class="w-full rounded-full mb-1" style="background:rgba(255,255,255,0.15); height:12px;">
+        <div class="xp-fill" id="xpBar" style="height:12px; width:0%;"></div>
+      </div>
+      <p class="text-xs" style="color:#9ca3af;" id="levelInfo">Level 1</p>
+    </div>
+
+    <!-- Badges -->
+    <div class="glass rounded-2xl p-4 mb-5">
+      <h3 class="text-white font-bold mb-3">🏅 Badge Didapat</h3>
+      <div class="flex flex-wrap gap-3" id="badgeList"></div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="glass rounded-2xl p-4 mb-5">
+      <h3 class="text-white font-bold mb-3">🏆 Leaderboard Kelas</h3>
+      <div id="leaderboard"></div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="grid grid-cols-2 gap-3">
+      <button onclick="startQuiz()" class="btn-primary rounded-2xl py-3 font-bold text-white">
+        <i class="fas fa-redo mr-1"></i> Ulang Kuis
+      </button>
+      <button onclick="goTo('modeSelect')" class="btn-secondary rounded-2xl py-3 font-bold text-white">
+        <i class="fas fa-home mr-1"></i> Pilih Mode
+      </button>
+    </div>
+    <button onclick="showCertificate()" class="btn-warn w-full rounded-2xl py-3 font-bold text-white mt-3">
+      <i class="fas fa-certificate mr-1"></i> Lihat Sertifikat
+    </button>
+    <button onclick="goTo('subjectSelect')" class="w-full rounded-2xl py-3 font-bold text-white mt-3 glass hover:bg-white hover:bg-opacity-10 transition-all">
+      <i class="fas fa-book mr-1"></i> Ganti Mata Pelajaran
+    </button>
+    <button onclick="openResetModal()" class="btn-reset w-full rounded-2xl py-3 font-bold text-white mt-3">
+      <i class="fas fa-user-edit mr-2"></i> Ganti Nama Siswa (Giliran Berikutnya)
+    </button>
+  </div>
+</div>
+
+<!-- ========== CERTIFICATE SCREEN ========== -->
+<div id="certScreen" class="screen" style="background:linear-gradient(135deg,#1c1917,#292524,#1c1917);">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 pb-24 overflow-y-auto min-h-screen">
+    <div class="cert-border rounded-3xl p-6 mb-6" style="background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(217,119,6,0.05));">
+      <div class="text-center">
+        <div class="text-5xl mb-2">🏅</div>
+        <div class="text-yellow-400 font-bold text-lg tracking-wider mb-1">SERTIFIKAT PRESTASI</div>
+        <div class="text-white text-2xl font-bold">EduVerse Nusantara</div>
+        <div class="w-24 h-1 mx-auto my-3 rounded-full" style="background:linear-gradient(90deg,#f59e0b,#ef4444);"></div>
+        <p class="text-white text-sm mb-3">Dengan bangga diberikan kepada:</p>
+        <p class="text-yellow-400 text-3xl font-bold mb-2" id="certName">-</p>
+        <p class="text-white text-sm" id="certClass">-</p>
+        <div class="grid grid-cols-3 gap-3 mt-4">
+          <div class="glass-dark rounded-xl p-2 text-center">
+            <p class="text-yellow-400 font-bold text-xl" id="certScore">-</p>
+            <p class="text-white text-xs">Total Skor</p>
+          </div>
+          <div class="glass-dark rounded-xl p-2 text-center">
+            <p class="text-green-400 font-bold text-xl" id="certBadge">-</p>
+            <p class="text-white text-xs">Badge</p>
+          </div>
+          <div class="glass-dark rounded-xl p-2 text-center">
+            <p class="text-blue-400 font-bold text-xl" id="certDate">-</p>
+            <p class="text-white text-xs">Tanggal</p>
+          </div>
+        </div>
+        <div class="mt-4 flex flex-wrap justify-center gap-2" id="certBadgeList"></div>
+        <p class="text-xs mt-4" style="color:rgba(255,255,255,0.4);">© 2026 EduVerse Nusantara Adventure</p>
+      </div>
+    </div>
+    <button onclick="goTo('scoreScreen')" class="btn-primary w-full rounded-2xl py-3 font-bold text-white">
+      <i class="fas fa-arrow-left mr-2"></i> Kembali ke Hasil
+    </button>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+const state = {
+  player: { name: '', avatar: 0, gender: 'laki', class: 1 },
+  selected: { subject: '', subjectName: '', materi: '', materiName: '' },
+  quiz: { questions: [], current: 0, score: 0, correct: 0, lives: 3, combo: 0, maxCombo: 0, xp: 0, answered: false },
+  progress: JSON.parse(localStorage.getItem('eduverse_progress') || '{"level":1,"totalXP":0,"badges":[],"scores":[]}')
+};
+
+// ===== DATA =====
+const avatars = [
+  { id: 0, emoji: '🧑‍🚀', name: 'Petualang Sains', color: '#6366f1' },
+  { id: 1, emoji: '⚔️', name: 'Ksatria Angka', color: '#f59e0b' },
+  { id: 2, emoji: '🛡️', name: 'Penjaga Nusantara', color: '#10b981' },
+  { id: 3, emoji: '✍️', name: 'Penulis Cilik', color: '#ec4899' },
+  { id: 4, emoji: '🎨', name: 'Seniman Kreatif', color: '#8b5cf6' },
+  { id: 5, emoji: '🌟', name: 'Bintang Belajar', color: '#f97316' }
+];
+
+const classes = [
+  { id:1, label:'Kelas 1', emoji:'🌱', color:'from-green-500 to-emerald-600' },
+  { id:2, label:'Kelas 2', emoji:'🌿', color:'from-teal-500 to-cyan-600' },
+  { id:3, label:'Kelas 3', emoji:'🌳', color:'from-blue-500 to-indigo-600' },
+  { id:4, label:'Kelas 4', emoji:'⭐', color:'from-yellow-500 to-orange-600' },
+  { id:5, label:'Kelas 5', emoji:'🔥', color:'from-orange-500 to-red-600' },
+  { id:6, label:'Kelas 6', emoji:'💫', color:'from-purple-500 to-pink-600' }
+];
+
+const subjects = [
+  { id:'math', name:'Matematika', emoji:'🔢', color:'from-blue-600 to-indigo-700', world:'Kerajaan Angka Futuristik', desc:'Bilangan, Operasi, Geometri' },
+  { id:'ina', name:'Bahasa Indonesia', emoji:'🇮🇩', color:'from-red-600 to-pink-700', world:'Perpustakaan Cerita Ajaib', desc:'Membaca, Menulis, Sastra' },
+  { id:'ipas', name:'IPAS', emoji:'🌱', color:'from-green-600 to-teal-700', world:'Laboratorium & Alam', desc:'Sains, Lingkungan, Tata Surya' },
+  { id:'eng', name:'Bahasa Inggris', emoji:'🌍', color:'from-cyan-600 to-blue-700', world:'Kota Internasional', desc:'Greetings, Numbers, Daily Life' },
+  { id:'paibp', name:'PAIBP', emoji:'☪️', color:'from-emerald-600 to-green-700', world:'Taman Islami Edukatif', desc:'Rukun Islam & Iman, Akhlak' },
+  { id:'seni', name:'Seni Budaya', emoji:'🎨', color:'from-pink-600 to-purple-700', world:'Galeri Seni Nusantara', desc:'Gambar, Musik, Tari, Warna' },
+  { id:'ppkn', name:'PPKn', emoji:'🏛️', color:'from-yellow-600 to-amber-700', world:'Kota Kebangsaan Indonesia', desc:'Pancasila, Norma, Persatuan' }
+];
+
+const materiData = {
+  math: ['Bilangan & Lambang Bilangan','Penjumlahan & Pengurangan','Perkalian & Pembagian','Pecahan Sederhana','Bangun Datar','Bangun Ruang','Pengukuran Panjang & Berat','Pengukuran Waktu','Pola Bilangan','Data & Grafik'],
+  ina: ['Membaca & Memahami Teks','Menulis Kalimat','Cerita Pendek','Dongeng & Fabel','Puisi Anak','Teks Deskripsi','Teks Narasi','Kosakata Baru','EYD & Tanda Baca','Pidato Sederhana'],
+  ipas: ['Makhluk Hidup & Ciri-cirinya','Tubuh Manusia','Tumbuhan & Hewan','Cuaca & Iklim','Energi & Sumbernya','Gaya & Gerak','Perubahan Wujud Benda','Ekosistem','Tata Surya','Lingkungan Hidup'],
+  eng: ['Greetings & Farewells','Numbers 1-100','Animals & Plants','Family Members','School & Classroom','Daily Activities','Fruits & Vegetables','Colors & Shapes','Days & Months','Simple Conversations'],
+  paibp: ['Rukun Islam','Rukun Iman','Huruf Hijaiyah','Doa Harian','Kisah Nabi Adam AS','Kisah Nabi Ibrahim AS','Akhlak Terpuji','Ibadah Sholat','Puasa Ramadan','Zakat & Sedekah'],
+  seni: ['Menggambar Ekspresi','Warna & Campuran Warna','Musik & Nada','Lagu Daerah Nusantara','Tari Daerah Indonesia','Kerajinan Tangan','Kolase Kreatif','Batik Nusantara','Wayang & Seni Tradisional','Seni Patung Sederhana'],
+  ppkn: ['Pancasila & Artinya','Sila-sila Pancasila','Aturan di Rumah & Sekolah','Gotong Royong','Hak & Kewajiban','Persatuan Indonesia','Keberagaman Budaya','Norma & Nilai','Bela Negara','Lambang Negara']
+};
+
+// ===== QUESTION BANK =====
+const questionBank = {
+  math: {
+    'Bilangan & Lambang Bilangan': [
+      { q:'Berapa nilai angka 5 pada bilangan 352?', opts:['5','50','500','5000'], ans:1, type:'pg' },
+      { q:'Bilangan antara 99 dan 101 adalah...', opts:['98','100','102','103'], ans:1, type:'pg' },
+      { q:'Angka yang tepat berada di antara 47 dan 49 adalah...', opts:['46','48','50','51'], ans:1, type:'pg' },
+      { q:'Tulisan dari angka 1.250 adalah...', opts:['Dua ratus lima puluh','Seribu dua ratus lima puluh','Dua ribu lima ratus','Seribu dua ratus'], ans:1, type:'pg' },
+      { q:'Nilai ratusan dari bilangan 4.567 adalah...', opts:['4','5','6','7'], ans:1, type:'pg' },
+      { q:'Bilangan ganjil di bawah 10 ada berapa?', opts:['3','4','5','6'], ans:2, type:'pg' },
+      { q:'Lambang bilangan "tujuh ratus dua belas" adalah...', opts:['712','721','271','127'], ans:0, type:'pg' },
+      { q:'Manakah urutan bilangan yang benar dari kecil ke besar?', opts:['12, 10, 8, 6','6, 8, 10, 12','8, 6, 12, 10','10, 8, 6, 12'], ans:1, type:'pg' }
+    ],
+    'Penjumlahan & Pengurangan': [
+      { q:'Berapakah hasil dari 125 + 78?', opts:['193','203','213','223'], ans:1, type:'pg' },
+      { q:'250 - 137 = ...', opts:['103','113','123','133'], ans:1, type:'pg' },
+      { q:'Ibu membeli 45 apel. Dimakan 18 apel. Sisa apel ada...', opts:['27','28','37','63'], ans:0, type:'pg' },
+      { q:'Hasil dari 300 + 250 - 75 adalah...', opts:['425','475','525','575'], ans:1, type:'pg' },
+      { q:'348 + ___ = 500. Nilai yang tepat adalah...', opts:['152','162','252','142'], ans:0, type:'pg' },
+      { q:'Berapakah 999 - 888?', opts:['101','111','121','131'], ans:1, type:'pg' },
+      { q:'Jika ada 60 siswa dan 25 perempuan, maka laki-laki ada...', opts:['25','35','45','85'], ans:1, type:'pg' },
+      { q:'1.000 - 456 = ...', opts:['444','544','554','644'], ans:1, type:'pg' }
+    ],
+    'Perkalian & Pembagian': [
+      { q:'7 × 8 = ...', opts:['54','56','58','64'], ans:1, type:'pg' },
+      { q:'72 ÷ 9 = ...', opts:['7','8','9','10'], ans:1, type:'pg' },
+      { q:'Ada 6 keranjang, setiap keranjang berisi 12 apel. Total apel ada...', opts:['62','72','82','92'], ans:1, type:'pg' },
+      { q:'120 ÷ 6 = ...', opts:['18','20','22','24'], ans:1, type:'pg' },
+      { q:'Hasil kali 15 × 4 adalah...', opts:['45','55','60','65'], ans:2, type:'pg' },
+      { q:'Manakah yang merupakan kelipatan 7?', opts:['42','45','47','50'], ans:0, type:'pg' },
+      { q:'Faktor dari 12 yang benar adalah...', opts:['1,2,3,4,6,12','1,2,3,4,5,12','1,2,3,6,9,12','1,2,4,6,8,12'], ans:0, type:'pg' },
+      { q:'9 × 9 = ...', opts:['72','81','90','99'], ans:1, type:'pg' }
+    ],
+    'Pecahan Sederhana': [
+      { q:'Setengah dari 40 adalah...', opts:['15','20','25','30'], ans:1, type:'pg' },
+      { q:'1/4 + 1/4 = ...', opts:['1/8','1/4','1/2','2/4'], ans:2, type:'pg' },
+      { q:'Pecahan yang nilainya paling besar adalah...', opts:['1/2','1/3','1/4','1/5'], ans:0, type:'pg' },
+      { q:'3/4 ditulis dalam persen adalah...', opts:['34%','50%','70%','75%'], ans:3, type:'pg' },
+      { q:'Sebuah pizza dibagi 8 bagian sama rata. Ani makan 3 bagian. Pecahan yang menunjukkan pizza Ani adalah...', opts:['3/4','3/5','3/8','8/3'], ans:2, type:'pg' },
+      { q:'Mana yang senilai dengan 2/4?', opts:['1/2','1/3','2/3','3/4'], ans:0, type:'pg' },
+      { q:'1/2 dari 60 adalah...', opts:['20','25','30','35'], ans:2, type:'pg' },
+      { q:'Urutan pecahan dari besar ke kecil: 1/2, 1/3, 3/4, 2/3 adalah...', opts:['3/4, 2/3, 1/2, 1/3','1/3, 1/2, 2/3, 3/4','2/3, 3/4, 1/2, 1/3','3/4, 1/2, 2/3, 1/3'], ans:0, type:'pg' }
+    ]
+  },
+  ina: {
+    'Membaca & Memahami Teks': [
+      { q:'Kalimat utama sebuah paragraf biasanya berisi...', opts:['Contoh cerita','Ide pokok paragraf','Kesimpulan akhir','Pertanyaan retoris'], ans:1, type:'pg' },
+      { q:'Makna kata "rajin" dalam kalimat "Budi adalah siswa yang rajin" adalah...', opts:['Malas','Suka bekerja keras','Pandai','Pintar'], ans:1, type:'pg' },
+      { q:'Apa yang dimaksud dengan teks deskripsi?', opts:['Teks yang berisi perintah','Teks yang menggambarkan sesuatu secara rinci','Teks yang menceritakan urutan kejadian','Teks berisi pendapat'], ans:1, type:'pg' },
+      { q:'Sinonim dari kata "bagus" adalah...', opts:['Buruk','Jelek','Indah','Rusak'], ans:2, type:'pg' },
+      { q:'Antonym dari kata "panas" adalah...', opts:['Hangat','Dingin','Sejuk','Gerah'], ans:1, type:'pg' },
+      { q:'Paragraf yang baik memiliki...', opts:['Banyak kalimat utama','Satu ide pokok','Dua topik berbeda','Tidak ada kalimat penjelas'], ans:1, type:'pg' }
+    ],
+    'Puisi Anak': [
+      { q:'Ciri-ciri puisi yang membedakannya dari prosa adalah...', opts:['Memiliki alur cerita','Berbentuk bait dan larik','Menggunakan dialog','Memiliki tokoh utama'], ans:1, type:'pg' },
+      { q:'Rima pada puisi adalah...', opts:['Judul puisi','Persamaan bunyi di akhir larik','Isi pesan puisi','Tokoh dalam puisi'], ans:1, type:'pg' },
+      { q:'Tema puisi "Ibu kau pelitaku, di gelap malamku" adalah...', opts:['Persahabatan','Kasih sayang ibu','Alam semesta','Sekolah'], ans:1, type:'pg' },
+      { q:'Majas perbandingan yang membandingkan dua hal secara langsung disebut...', opts:['Metafora','Personifikasi','Simile','Hiperbola'], ans:2, type:'pg' }
+    ]
+  },
+  ipas: {
+    'Makhluk Hidup & Ciri-cirinya': [
+      { q:'Ciri makhluk hidup yang membedakannya dari benda mati adalah...', opts:['Dapat bergerak saja','Bernapas, bergerak, tumbuh, berkembang biak','Memiliki warna','Dapat dipindahkan'], ans:1, type:'pg' },
+      { q:'Proses pertumbuhan tanaman dari biji disebut...', opts:['Fotosintesis','Respirasi','Germinasi','Reproduksi'], ans:2, type:'pg' },
+      { q:'Hewan yang berkembang biak dengan bertelur disebut...', opts:['Vivipar','Ovipar','Ovovivipar','Generatif'], ans:1, type:'pg' },
+      { q:'Makhluk hidup membutuhkan oksigen untuk proses...', opts:['Fotosintesis','Bernapas','Bergerak','Makan'], ans:1, type:'pg' },
+      { q:'Tumbuhan mendapatkan makanannya melalui proses...', opts:['Respirasi','Transpirasi','Fotosintesis','Germinasi'], ans:2, type:'pg' },
+      { q:'Hewan yang memakan tumbuhan disebut...', opts:['Karnivora','Omnivora','Herbivora','Insektivora'], ans:2, type:'pg' },
+      { q:'Adaptasi bunglon mengubah warna kulit bertujuan untuk...', opts:['Mencari makan','Melindungi diri dari musuh','Menarik perhatian','Mengatur suhu tubuh'], ans:1, type:'pg' },
+      { q:'Rantai makanan yang benar adalah...', opts:['Harimau → Rusa → Rumput','Rumput → Belalang → Katak → Ular','Ular → Katak → Belalang → Rumput','Katak → Ular → Rumput → Belalang'], ans:1, type:'pg' }
+    ],
+    'Tata Surya': [
+      { q:'Planet terdekat dari Matahari adalah...', opts:['Venus','Bumi','Mars','Merkurius'], ans:3, type:'pg' },
+      { q:'Berapa jumlah planet dalam tata surya kita?', opts:['7','8','9','10'], ans:1, type:'pg' },
+      { q:'Planet terbesar dalam tata surya adalah...', opts:['Saturnus','Uranus','Jupiter','Neptunus'], ans:2, type:'pg' },
+      { q:'Benda langit yang mengelilingi planet disebut...', opts:['Asteroid','Komet','Satelit','Meteor'], ans:2, type:'pg' },
+      { q:'Gerhana matahari terjadi ketika...', opts:['Bumi menutup cahaya matahari ke bulan','Bulan berada di antara bumi dan matahari','Matahari tertutup awan','Bumi tidak berputar'], ans:1, type:'pg' },
+      { q:'Lapisan terluar matahari yang terlihat saat gerhana total disebut...', opts:['Inti','Kromosfer','Korona','Fotosfer'], ans:2, type:'pg' }
+    ]
+  },
+  eng: {
+    'Greetings & Farewells': [
+      { q:'What do you say when you meet someone in the morning?', opts:['Good night','Good afternoon','Good morning','Good evening'], ans:2, type:'pg' },
+      { q:'"See you tomorrow" artinya adalah...', opts:['Sampai jumpa besok','Halo besok','Selamat pagi','Selamat tinggal'], ans:0, type:'pg' },
+      { q:'How do you respond to "How are you?"', opts:['I am fine, thank you','My name is Budi','I go to school','Yes, please'], ans:0, type:'pg' },
+      { q:'Kata sapaan yang digunakan saat bertemu teman adalah...', opts:['Goodbye','Hello','Goodnight','See you'], ans:1, type:'pg' },
+      { q:'"Nice to meet you" means...', opts:['Senang bertemu denganmu','Selamat pagi','Sampai jumpa','Nama saya'], ans:0, type:'pg' },
+      { q:'What do you say when leaving?', opts:['Hello','Nice to meet you','Goodbye','How are you?'], ans:2, type:'pg' }
+    ],
+    'Animals & Plants': [
+      { q:'The animal that says "meow" is...', opts:['Dog','Cat','Cow','Bird'], ans:1, type:'pg' },
+      { q:'"Kupu-kupu" in English is...', opts:['Bee','Ant','Butterfly','Dragonfly'], ans:2, type:'pg' },
+      { q:'What animal has a very long neck?', opts:['Elephant','Giraffe','Hippo','Rhino'], ans:1, type:'pg' },
+      { q:'"Bunga" in English is...', opts:['Tree','Leaf','Flower','Root'], ans:2, type:'pg' },
+      { q:'Which animal lives in the ocean?', opts:['Tiger','Eagle','Dolphin','Rabbit'], ans:2, type:'pg' },
+      { q:'"Pohon" in English is...', opts:['Flower','Grass','Tree','Leaf'], ans:2, type:'pg' }
+    ]
+  },
+  paibp: {
+    'Rukun Islam': [
+      { q:'Rukun Islam ada berapa?', opts:['3','4','5','6'], ans:2, type:'pg' },
+      { q:'Rukun Islam yang pertama adalah...', opts:['Sholat','Syahadat','Puasa','Haji'], ans:1, type:'pg' },
+      { q:'Ibadah puasa dilaksanakan pada bulan...', opts:['Syawal','Dzulhijjah','Ramadan','Muharram'], ans:2, type:'pg' },
+      { q:'Membayar zakat adalah kewajiban bagi yang...', opts:['Miskin','Kaya (mampu)','Anak kecil','Semua orang'], ans:1, type:'pg' },
+      { q:'Ibadah haji dilaksanakan di kota...', opts:['Jakarta','Kairo','Mekah & Madinah','Turki'], ans:2, type:'pg' },
+      { q:'Sholat wajib sehari semalam ada berapa rakaat? (total)', opts:['15','17','19','21'], ans:1, type:'pg' },
+      { q:'Syahadat terdiri dari dua kalimat, yaitu syahadat tauhid dan syahadat...', opts:['Rasul','Nabi','Malaikat','Kitab'], ans:0, type:'pg' },
+      { q:'Zakat yang wajib dikeluarkan pada bulan Ramadan sebelum sholat Idul Fitri disebut...', opts:['Zakat mal','Zakat fitrah','Infak','Sedekah'], ans:1, type:'pg' }
+    ],
+    'Huruf Hijaiyah': [
+      { q:'Huruf hijaiyah ada berapa?', opts:['26','28','29','30'], ans:2, type:'pg' },
+      { q:'Huruf hijaiyah pertama adalah...', opts:['Ba','Ta','Alif','Jim'], ans:2, type:'pg' },
+      { q:'Huruf ب dibaca...', opts:['Ta','Ba','Tsa','Dal'], ans:1, type:'pg' },
+      { q:'Tanda baca fathah berbunyi...', opts:['i','u','a','o'], ans:2, type:'pg' },
+      { q:'Huruf yang tidak bisa disambung adalah...', opts:['Ba','Ta','Alif','Sin'], ans:2, type:'pg' }
+    ]
+  },
+  seni: {
+    'Warna & Campuran Warna': [
+      { q:'Warna primer dalam seni lukis adalah...', opts:['Merah, Hijau, Biru','Merah, Kuning, Biru','Merah, Putih, Hitam','Kuning, Hijau, Ungu'], ans:1, type:'pg' },
+      { q:'Hasil campuran warna merah dan kuning adalah...', opts:['Ungu','Hijau','Oranye','Coklat'], ans:2, type:'pg' },
+      { q:'Warna yang berlawanan di roda warna disebut warna...', opts:['Analogus','Komplementer','Primer','Tersier'], ans:1, type:'pg' },
+      { q:'Campuran warna biru dan merah menghasilkan...', opts:['Hijau','Oranye','Ungu','Coklat'], ans:2, type:'pg' },
+      { q:'Warna yang bukan warna primer adalah...', opts:['Merah','Kuning','Hijau','Biru'], ans:2, type:'pg' },
+      { q:'Campuran semua warna menghasilkan warna...', opts:['Putih','Hitam','Abu-abu','Coklat'], ans:1, type:'pg' }
+    ],
+    'Lagu Daerah Nusantara': [
+      { q:'"Ampar-Ampar Pisang" adalah lagu daerah dari...', opts:['Jawa Barat','Sumatera Barat','Kalimantan Selatan','Sulawesi'], ans:2, type:'pg' },
+      { q:'"Gundul-Gundul Pacul" berasal dari daerah...', opts:['Bali','Jawa','Sumatera','Kalimantan'], ans:1, type:'pg' },
+      { q:'Lagu daerah Bali yang terkenal adalah...', opts:['Tokecang','Manuk Dadali','Janger','Apuse'], ans:2, type:'pg' },
+      { q:'"Apuse" adalah lagu daerah dari...', opts:['Papua','Aceh','Maluku','NTT'], ans:0, type:'pg' },
+      { q:'"Bungong Jeumpa" adalah lagu dari...', opts:['Sumatera Barat','Aceh','Riau','Jambi'], ans:1, type:'pg' }
+    ]
+  },
+  ppkn: {
+    'Pancasila & Artinya': [
+      { q:'Pancasila berasal dari bahasa...', opts:['Jawa','Melayu','Sansekerta','Arab'], ans:2, type:'pg' },
+      { q:'Sila pertama Pancasila berbunyi...', opts:['Kemanusiaan yang adil dan beradab','Ketuhanan Yang Maha Esa','Persatuan Indonesia','Keadilan sosial bagi seluruh rakyat Indonesia'], ans:1, type:'pg' },
+      { q:'Lambang Pancasila adalah...', opts:['Bendera merah putih','Burung Garuda','Perisai','Pita Bhinneka Tunggal Ika'], ans:1, type:'pg' },
+      { q:'Jumlah bulu pada sayap Burung Garuda Pancasila adalah...', opts:['15','17','19','21'], ans:1, type:'pg' },
+      { q:'Sila ke-3 Pancasila dilambangkan dengan...', opts:['Bintang','Rantai','Pohon Beringin','Kepala Banteng'], ans:2, type:'pg' },
+      { q:'"Bhinneka Tunggal Ika" artinya...', opts:['Bersatu kita teguh','Berbeda-beda tetapi tetap satu','Majulah Indonesia','Satu nusa satu bangsa'], ans:1, type:'pg' },
+      { q:'Nilai Pancasila pertama mengajarkan kita untuk...', opts:['Bermusuhan dengan orang lain','Menghormati perbedaan agama','Tidak peduli sesama','Hanya mementingkan diri sendiri'], ans:1, type:'pg' },
+      { q:'Sila ke-5 Pancasila berbunyi tentang...', opts:['Kemanusiaan','Persatuan','Kerakyatan','Keadilan Sosial'], ans:3, type:'pg' }
+    ],
+    'Keberagaman Budaya': [
+      { q:'Batik adalah warisan budaya dari...', opts:['Bali','Indonesia (terutama Jawa)','Malaysia','Thailand'], ans:1, type:'pg' },
+      { q:'Tari Saman berasal dari provinsi...', opts:['Jawa Barat','Bali','Aceh','Sulawesi Selatan'], ans:2, type:'pg' },
+      { q:'Keberagaman budaya di Indonesia harus kita sikapi dengan...', opts:['Merendahkan budaya lain','Memaksakan budaya sendiri','Menghargai dan melestarikannya','Tidak peduli'], ans:2, type:'pg' },
+      { q:'Rumah adat Betawi disebut...', opts:['Rumah Joglo','Rumah Gadang','Rumah Kebaya','Rumah Honai'], ans:2, type:'pg' },
+      { q:'Alat musik angklung berasal dari...', opts:['Jawa Tengah','Jawa Barat','Sumatera','Kalimantan'], ans:1, type:'pg' }
+    ]
+  }
+};
+
+// Materi content data
+const materiContent = {
+  math: {
+    'Bilangan & Lambang Bilangan': {
+      icon:'🔢',
+      content:[
+        { title:'Apa itu Bilangan?', text:'Bilangan adalah simbol matematika yang menyatakan banyaknya sesuatu. Contoh: 1, 2, 3, 10, 100, 1.000.' },
+        { title:'Nilai Tempat', text:'Setiap angka memiliki nilai tempat: satuan, puluhan, ratusan, ribuan. Contoh: 345 → 3 ratusan, 4 puluhan, 5 satuan.' },
+        { title:'Bilangan Genap & Ganjil', text:'Bilangan genap habis dibagi 2 (0,2,4,6,8...). Bilangan ganjil tidak habis dibagi 2 (1,3,5,7,9...).' },
+        { title:'Contoh Soal', text:'Berapa nilai ratusan dari 4.567? Jawabannya: 5 (karena 5 berada di posisi ratusan = 500)' }
+      ]
+    },
+    'Penjumlahan & Pengurangan': {
+      icon:'➕',
+      content:[
+        { title:'Penjumlahan', text:'Menggabungkan dua kelompok bilangan. Contoh: 125 + 78 = 203. Caranya: tambahkan per kolom dari kanan.' },
+        { title:'Pengurangan', text:'Mengambil sebagian dari kelompok bilangan. Contoh: 250 - 137 = 113.' },
+        { title:'Tips Berhitung Cepat', text:'Untuk 348 + 152, bisa diurai: 300+100=400, 48+52=100, total=500. Mudah kan!' },
+        { title:'Soal Cerita', text:'Ibu punya 45 apel, dimakan 18. Sisa = 45-18 = 27 apel.' }
+      ]
+    }
+  },
+  ina: {
+    'Membaca & Memahami Teks': {
+      icon:'📖',
+      content:[
+        { title:'Kalimat Utama', text:'Kalimat utama adalah kalimat yang mengandung ide pokok sebuah paragraf. Biasanya di awal atau akhir paragraf.' },
+        { title:'Sinonim & Antonim', text:'Sinonim = kata yang maknanya sama. Contoh: bagus = indah = cantik. Antonim = kata berlawanan. Contoh: panas ≠ dingin.' },
+        { title:'Jenis Teks', text:'Teks narasi (bercerita), teks deskripsi (menggambarkan), teks prosedur (langkah-langkah), teks eksposisi (menjelaskan).' },
+        { title:'Cara Memahami Teks', text:'1. Baca judulnya. 2. Baca sekilas paragraf pertama. 3. Cari kalimat utama. 4. Hubungkan dengan pengalaman.' }
+      ]
+    }
+  },
+  ipas: {
+    'Tata Surya': {
+      icon:'🌍',
+      content:[
+        { title:'Matahari', text:'Bintang di pusat tata surya kita. Matahari tersusun dari gas hidrogen dan helium yang sangat panas.' },
+        { title:'8 Planet', text:'Merkurius, Venus, Bumi, Mars, Jupiter, Saturnus, Uranus, Neptunus. Bumi adalah satu-satunya planet berpenghuni.' },
+        { title:'Satelit', text:'Benda langit yang mengelilingi planet. Bulan adalah satelit alami Bumi. Jupiter punya lebih dari 90 satelit!' },
+        { title:'Gerhana', text:'Gerhana matahari = Bulan di antara Bumi & Matahari. Gerhana bulan = Bumi di antara Matahari & Bulan.' }
+      ]
+    }
+  },
+  eng: {
+    'Greetings & Farewells': {
+      icon:'👋',
+      content:[
+        { title:'Morning Greetings', text:'Good morning (pagi), Good afternoon (siang), Good evening (sore/malam), Good night (selamat malam/tidur).' },
+        { title:'Meeting People', text:'"Hello/Hi!" untuk teman. "How are you?" - "I am fine, thank you!" - "Nice to meet you!" - "Nice to meet you too!"' },
+        { title:'Saying Goodbye', text:'"Goodbye/Bye!" = selamat tinggal. "See you tomorrow" = sampai jumpa besok. "Take care!" = hati-hati.' },
+        { title:'Practice', text:'A: Good morning! B: Good morning! How are you? A: I am fine, thank you. And you? B: I am great, thanks!' }
+      ]
+    }
+  },
+  paibp: {
+    'Rukun Islam': {
+      icon:'☪️',
+      content:[
+        { title:'5 Rukun Islam', text:'1. Syahadat (bersaksi), 2. Sholat (5 waktu), 3. Puasa (Ramadan), 4. Zakat (berbagi), 5. Haji (ke Mekah, bagi yang mampu).' },
+        { title:'Syahadat', text:'Bersaksi bahwa tidak ada Tuhan selain Allah dan Nabi Muhammad adalah utusan Allah. Ini dasar keislaman.' },
+        { title:'Sholat 5 Waktu', text:'Subuh (2 rakaat), Dzuhur (4 rakaat), Ashar (4 rakaat), Maghrib (3 rakaat), Isya (4 rakaat). Total: 17 rakaat.' },
+        { title:'Puasa Ramadan', text:'Menahan makan, minum, dan perbuatan buruk dari subuh sampai maghrib selama sebulan penuh di bulan Ramadan.' }
+      ]
+    }
+  },
+  seni: {
+    'Warna & Campuran Warna': {
+      icon:'🎨',
+      content:[
+        { title:'Warna Primer', text:'Warna dasar yang tidak bisa dibuat dari campuran: Merah, Kuning, Biru. Semua warna lain berasal dari campuran warna primer.' },
+        { title:'Warna Sekunder', text:'Merah + Kuning = Oranye. Kuning + Biru = Hijau. Merah + Biru = Ungu. Ini disebut warna sekunder.' },
+        { title:'Warna Panas & Dingin', text:'Panas: merah, oranye, kuning. Dingin: biru, hijau, ungu. Warna panas memberi kesan hangat dan energik.' },
+        { title:'Roda Warna', text:'Warna komplementer (berlawanan) menghasilkan kontras kuat. Contoh: merah - hijau, biru - oranye.' }
+      ]
+    }
+  },
+  ppkn: {
+    'Pancasila & Artinya': {
+      icon:'🇮🇩',
+      content:[
+        { title:'Arti Pancasila', text:'Pancasila dari bahasa Sansekerta: "panca" = lima, "sila" = prinsip/dasar. Pancasila = 5 dasar negara Indonesia.' },
+        { title:'5 Sila Pancasila', text:'1. Ketuhanan YME, 2. Kemanusiaan yang adil & beradab, 3. Persatuan Indonesia, 4. Kerakyatan yang dipimpin hikmat, 5. Keadilan sosial.' },
+        { title:'Lambang Garuda', text:'Burung Garuda melambangkan kekuatan. 17 bulu sayap = 17 Agustus. 8 bulu ekor = bulan 8 (Agustus). 45 bulu leher = tahun 45.' },
+        { title:'Bhinneka Tunggal Ika', text:'Artinya "Berbeda-beda tetapi tetap satu". Meski berbeda suku, agama, budaya, kita tetap satu bangsa Indonesia!' }
+      ]
+    }
+  }
+};
+
+// ===== AUDIO =====
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function getAudio() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
+function playSound(type) {
+  try {
+    const ctx = getAudio();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    const t = ctx.currentTime;
+    if (type === 'correct') { o.frequency.setValueAtTime(523, t); o.frequency.setValueAtTime(659, t+0.1); o.frequency.setValueAtTime(784, t+0.2); g.gain.setValueAtTime(0.3,t); g.gain.exponentialRampToValueAtTime(0.001, t+0.5); }
+    else if (type === 'wrong') { o.frequency.setValueAtTime(200, t); o.frequency.setValueAtTime(150, t+0.2); g.gain.setValueAtTime(0.3,t); g.gain.exponentialRampToValueAtTime(0.001, t+0.4); }
+    else if (type === 'click') { o.frequency.setValueAtTime(800, t); g.gain.setValueAtTime(0.1,t); g.gain.exponentialRampToValueAtTime(0.001, t+0.1); }
+    else if (type === 'badge') { o.type='square'; o.frequency.setValueAtTime(1000,t); o.frequency.setValueAtTime(1200,t+0.1); g.gain.setValueAtTime(0.2,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.5); }
+    o.start(t); o.stop(t+0.6);
+  } catch(e) {}
+}
+
+// ===== SCREEN NAV =====
+const NO_FAB_SCREENS = ['splash', 'profile'];
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.classList.remove('screen-enter');
+  void el.offsetWidth;
+  el.classList.add('screen-enter');
+  el.scrollTop = 0;
+  window.scrollTo(0,0);
+  playSound('click');
+  // Show/hide home FAB
+  const fab = document.getElementById('homeFab');
+  if (NO_FAB_SCREENS.includes(id)) {
+    fab.classList.add('hidden');
+  } else {
+    fab.classList.remove('hidden');
+  }
+}
+
+// ===== HOME =====
+function confirmGoHome() {
+  const activeScreen = document.querySelector('.screen.active');
+  if (activeScreen && activeScreen.id === 'quizScreen') {
+    document.getElementById('modalHome').classList.remove('hidden');
+  } else {
+    goHome();
+  }
+}
+function goHome() {
+  closeModal('modalHome');
+  state.quiz = { questions:[], current:0, score:0, correct:0, lives:3, combo:0, maxCombo:0, xp:0, answered:false };
+  // Update splash quick-reset
+  if (state.player.name) {
+    document.getElementById('splashQuickReset').classList.remove('hidden');
+    document.getElementById('splashPlayerName').textContent = state.player.name;
+    document.getElementById('splashAvatarEmoji').textContent = avatars[state.player.avatar]?.emoji || '🧑‍🚀';
+  }
+  goTo('splash');
+  document.getElementById('homeFab').classList.add('hidden');
+}
+
+// ===== MODAL HELPERS =====
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+// ===== RESET / GANTI NAMA =====
+let resetAvatarSelected = 0;
+function openResetModal() {
+  resetAvatarSelected = state.player.avatar;
+  document.getElementById('newNameInput').value = '';
+  renderResetAvatarGrid();
+  document.getElementById('modalReset').classList.remove('hidden');
+  setTimeout(() => document.getElementById('newNameInput').focus(), 100);
+}
+function renderResetAvatarGrid() {
+  const grid = document.getElementById('resetAvatarGrid');
+  grid.innerHTML = avatars.map(a => `
+    <div onclick="selectResetAvatar(${a.id})" title="${a.name}"
+      class="cursor-pointer rounded-xl p-1 text-center text-xl transition-all hover:scale-110"
+      id="rAvatar${a.id}"
+      style="background:${resetAvatarSelected===a.id?'rgba(99,102,241,0.5)':'rgba(255,255,255,0.1)'};
+             border:2px solid ${resetAvatarSelected===a.id?'#6366f1':'rgba(255,255,255,0.2)'};">
+      ${a.emoji}
+    </div>
+  `).join('');
+}
+function selectResetAvatar(id) {
+  resetAvatarSelected = id;
+  renderResetAvatarGrid();
+  playSound('click');
+}
+function applyReset() {
+  const name = document.getElementById('newNameInput').value.trim();
+  if (!name) { document.getElementById('newNameInput').style.borderColor='#ef4444'; setTimeout(()=>document.getElementById('newNameInput').style.borderColor='rgba(255,255,255,0.3)',1500); return; }
+  // Reset player but keep progress leaderboard
+  state.player.name = name;
+  state.player.avatar = resetAvatarSelected;
+  state.quiz = { questions:[], current:0, score:0, correct:0, lives:3, combo:0, maxCombo:0, xp:0, answered:false };
+  closeModal('modalReset');
+  // Update splash card
+  document.getElementById('splashQuickReset').classList.remove('hidden');
+  document.getElementById('splashPlayerName').textContent = name;
+  document.getElementById('splashAvatarEmoji').textContent = avatars[resetAvatarSelected]?.emoji || '🧑‍🚀';
+  playSound('correct');
+  // Go back to class selection (keep same kelas / mapel flow from splash)
+  goHome();
+}
+
+// ===== PARTICLES =====
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 6 + 2;
+    const colors = ['#6366f1','#8b5cf6','#10b981','#f59e0b','#ec4899','#3b82f6'];
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*10+8}s;animation-delay:${Math.random()*10}s;`;
+    container.appendChild(p);
+  }
+}
+
+// ===== AVATAR GRID =====
+function renderAvatars() {
+  const grid = document.getElementById('avatarGrid');
+  grid.innerHTML = avatars.map(a => `
+    <div class="avatar-card glass rounded-2xl p-3 text-center ${state.player.avatar===a.id?'selected':''}" onclick="selectAvatar(${a.id})">
+      <div class="text-3xl mb-1">${a.emoji}</div>
+      <p class="text-white text-xs font-semibold leading-tight">${a.name}</p>
+    </div>
+  `).join('');
+}
+
+function selectAvatar(id) {
+  state.player.avatar = id;
+  renderAvatars();
+  playSound('click');
+}
+
+function selectGender(g) {
+  state.player.gender = g;
+  document.getElementById('genderLaki').style.borderColor = g==='laki' ? '#6366f1' : 'rgba(255,255,255,0.3)';
+  document.getElementById('genderPerempuan').style.borderColor = g==='perempuan' ? '#6366f1' : 'rgba(255,255,255,0.3)';
+  playSound('click');
+}
+
+function confirmProfile() {
+  const name = document.getElementById('playerName').value.trim();
+  if (!name) { alert('Masukkan nama kamu dulu ya! 😊'); return; }
+  state.player.name = name;
+  // Update splash quick-reset panel
+  document.getElementById('splashQuickReset').classList.remove('hidden');
+  document.getElementById('splashPlayerName').textContent = name;
+  document.getElementById('splashAvatarEmoji').textContent = avatars[state.player.avatar]?.emoji || '🧑‍🚀';
+  goTo('classSelect');
+  renderClasses();
+}
+
+// ===== CLASSES =====
+function renderClasses() {
+  const grid = document.getElementById('classGrid');
+  grid.innerHTML = classes.map(c => `
+    <div class="class-card glass rounded-2xl p-5 text-center" onclick="selectClass(${c.id})">
+      <div class="text-4xl mb-2">${c.emoji}</div>
+      <p class="text-white text-xl font-bold">${c.label}</p>
+      <div class="mt-2 inline-block px-3 py-1 rounded-full text-xs text-white bg-gradient-to-r ${c.color}">${c.label}</div>
+    </div>
+  `).join('');
+}
+
+function selectClass(id) {
+  state.player.class = id;
+  playSound('click');
+  goTo('subjectSelect');
+  document.getElementById('subjectClassLabel').textContent = `Kelas ${id} • Pilih mata pelajaran favoritmu!`;
+  document.getElementById('hudName').textContent = avatars[state.player.avatar].emoji + ' ' + state.player.name;
+  document.getElementById('hudClass').textContent = `Kelas ${id}`;
+  renderHearts('hudHearts', state.quiz.lives);
+  renderSubjects();
+}
+
+// ===== HEARTS =====
+function renderHearts(elId, count) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = Array.from({length:3},(_, i)=>`<span class="heart-life ${i>=count?'lost':''}">❤️</span>`).join('');
+}
+
+// ===== SUBJECTS =====
+function renderSubjects() {
+  const grid = document.getElementById('subjectGrid');
+  grid.innerHTML = subjects.map(s => `
+    <div class="subject-card glass rounded-2xl p-4" onclick="selectSubject('${s.id}','${s.name}')">
+      <div class="text-4xl mb-2 text-center">${s.emoji}</div>
+      <h3 class="text-white font-bold text-center text-base">${s.name}</h3>
+      <p class="text-center text-xs mt-1" style="color:rgba(255,255,255,0.6);">${s.world}</p>
+      <div class="mt-2 w-full py-1 rounded-xl text-xs text-white font-semibold text-center bg-gradient-to-r ${s.color}">${s.desc}</div>
+    </div>
+  `).join('');
+}
+
+function selectSubject(id, name) {
+  state.selected.subject = id;
+  state.selected.subjectName = name;
+  playSound('click');
+  goTo('materiSelect');
+  document.getElementById('materiLabel').textContent = `${name} • Kelas ${state.player.class}`;
+  renderMateri(id);
+}
+
+// ===== MATERI =====
+function renderMateri(subjectId) {
+  const grid = document.getElementById('materiGrid');
+  const topics = materiData[subjectId] || [];
+  const subj = subjects.find(s=>s.id===subjectId);
+  grid.innerHTML = topics.map((m,i) => `
+    <div class="material-card glass rounded-2xl p-4 flex items-center gap-3" onclick="selectMateri('${m}')">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold text-white flex-shrink-0 bg-gradient-to-br ${subj.color}">${i+1}</div>
+      <div>
+        <p class="text-white font-semibold">${m}</p>
+        <p class="text-xs" style="color:rgba(255,255,255,0.5);">Klik untuk pilih materi ini</p>
+      </div>
+      <i class="fas fa-chevron-right ml-auto" style="color:rgba(255,255,255,0.4);"></i>
+    </div>
+  `).join('');
+}
+
+function selectMateri(name) {
+  state.selected.materi = name;
+  state.selected.materiName = name;
+  playSound('click');
+  goTo('modeSelect');
+  document.getElementById('modeInfoText').innerHTML = `${subjects.find(s=>s.id===state.selected.subject)?.emoji||''} <strong>${state.selected.subjectName}</strong> → ${name}`;
+}
+
+// ===== LEARN MODE =====
+function startLearn() {
+  playSound('click');
+  goTo('materiScreen');
+  const subj = state.selected.subject;
+  const mat = state.selected.materiName;
+  document.getElementById('materiTitle').textContent = `📚 ${mat}`;
+  const subjectData = materiContent[subj] || {};
+  const content = subjectData[mat];
+  const el = document.getElementById('materiContent');
+  if (content) {
+    el.innerHTML = `
+      <div class="text-center text-5xl mb-4">${content.icon}</div>
+      ${content.content.map(c=>`
+        <div class="materi-card">
+          <h3 class="text-white font-bold text-lg mb-2">📌 ${c.title}</h3>
+          <p style="color:rgba(255,255,255,0.85); line-height:1.7;">${c.text}</p>
+        </div>
+      `).join('')}
+      <div class="materi-card" style="background:rgba(99,102,241,0.15); border-color:rgba(99,102,241,0.4);">
+        <p class="text-white text-center font-semibold">✅ Sudah paham? Ayo mulai kuis!</p>
+      </div>
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="text-center py-8">
+        <div class="text-5xl mb-4">${subjects.find(s=>s.id===subj)?.emoji||'📚'}</div>
+        <h3 class="text-white text-xl font-bold mb-3">${mat}</h3>
+        <div class="materi-card text-center">
+          <p style="color:rgba(255,255,255,0.8);">Materi ini mencakup konsep-konsep penting tentang <strong class="text-white">${mat}</strong>.</p>
+          <p class="mt-2" style="color:rgba(255,255,255,0.8);">Pelajari dengan seksama, bertanya kepada guru, dan siapkan dirimu untuk kuis!</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-4">
+          <div class="glass rounded-xl p-3 text-center"><div class="text-2xl mb-1">📖</div><p class="text-white text-sm">Baca buku pelajaran</p></div>
+          <div class="glass rounded-xl p-3 text-center"><div class="text-2xl mb-1">✏️</div><p class="text-white text-sm">Catat poin penting</p></div>
+          <div class="glass rounded-xl p-3 text-center"><div class="text-2xl mb-1">🤔</div><p class="text-white text-sm">Pahami konsep</p></div>
+          <div class="glass rounded-xl p-3 text-center"><div class="text-2xl mb-1">💬</div><p class="text-white text-sm">Diskusi dengan teman</p></div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ===== QUIZ =====
+function buildQuestions() {
+  const bank = questionBank[state.selected.subject];
+  if (!bank) return getFallbackQuestions();
+  let allQ = [];
+  const matKey = state.selected.materiName;
+  if (bank[matKey]) {
+    allQ = [...bank[matKey]];
+  } else {
+    Object.values(bank).forEach(arr => allQ.push(...arr));
+  }
+  if (allQ.length === 0) return getFallbackQuestions();
+  // Shuffle
+  for (let i = allQ.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [allQ[i],allQ[j]] = [allQ[j],allQ[i]];
+  }
+  return allQ.slice(0, 10).map(q => {
+    // Shuffle options too
+    const shuffled = q.opts.map((o,i)=>({o,i}));
+    for (let i=shuffled.length-1;i>0;i--) {
+      const j=Math.floor(Math.random()*(i+1));
+      [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+    }
+    const newAns = shuffled.findIndex(s=>s.i===q.ans);
+    return { ...q, opts: shuffled.map(s=>s.o), ans: newAns };
+  });
+}
+
+function getFallbackQuestions() {
+  const fallback = [
+    { q:`Apa mata pelajaran favorit kamu?`, opts:['Matematika','Bahasa Indonesia','IPAS','Bahasa Inggris'], ans:0, type:'pg' },
+    { q:`Berapa hari dalam seminggu?`, opts:['5','6','7','8'], ans:2, type:'pg' },
+    { q:`Indonesia merdeka pada tanggal...`, opts:['16 Agustus 1945','17 Agustus 1945','18 Agustus 1945','17 Agustus 1944'], ans:1, type:'pg' },
+    { q:`Ibu kota Indonesia adalah...`, opts:['Surabaya','Bandung','Jakarta/Nusantara','Bali'], ans:2, type:'pg' },
+    { q:`Warna bendera Indonesia adalah...`, opts:['Merah Putih','Biru Putih','Merah Kuning','Putih Merah Biru'], ans:0, type:'pg' },
+    { q:`Jumlah sila Pancasila adalah...`, opts:['3','4','5','6'], ans:2, type:'pg' },
+    { q:`Bahasa resmi negara Indonesia adalah...`, opts:['Jawa','Melayu','Indonesia','Sunda'], ans:2, type:'pg' },
+    { q:`Planet tempat kita tinggal bernama...`, opts:['Mars','Venus','Bumi','Jupiter'], ans:2, type:'pg' },
+    { q:`Berapa jumlah pulau besar di Indonesia?`, opts:['3','5','7','9'], ans:1, type:'pg' },
+    { q:`Warna langit di siang hari adalah...`, opts:['Merah','Kuning','Biru','Hitam'], ans:2, type:'pg' }
+  ];
+  return fallback;
+}
+
+function startQuiz() {
+  playSound('click');
+  state.quiz = { questions: buildQuestions(), current:0, score:0, correct:0, lives:3, combo:0, maxCombo:0, xp:0, answered:false };
+  goTo('quizScreen');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = state.quiz.questions[state.quiz.current];
+  if (!q) { endQuiz(); return; }
+  state.quiz.answered = false;
+
+  document.getElementById('qNum').textContent = state.quiz.current + 1;
+  document.getElementById('qScore').textContent = state.quiz.score;
+  document.getElementById('quizProgress').style.width = `${((state.quiz.current)/10)*100}%`;
+  renderHearts('quizHearts', state.quiz.lives);
+
+  // Combo
+  if (state.quiz.combo >= 2) {
+    document.getElementById('comboDisplay').classList.remove('hidden');
+    document.getElementById('comboNum').textContent = state.quiz.combo;
+  } else {
+    document.getElementById('comboDisplay').classList.add('hidden');
+  }
+
+  document.getElementById('qType').textContent = 'Pilihan Ganda 🎯';
+  document.getElementById('questionText').textContent = q.q;
+  document.getElementById('nextBtn').classList.add('hidden');
+
+  const cont = document.getElementById('answersContainer');
+  cont.innerHTML = q.opts.map((opt,i) => `
+    <button class="answer-btn w-full text-left rounded-2xl p-4 mb-3 text-white font-semibold text-base"
+      style="background:rgba(255,255,255,0.08);" id="ans${i}" onclick="selectAnswer(${i})">
+      <span class="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold mr-3 flex-shrink-0 text-sm"
+        style="background:rgba(255,255,255,0.2);">${'ABCD'[i]}</span>${opt}
+    </button>
+  `).join('');
+}
+
+function selectAnswer(idx) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+  const q = state.quiz.questions[state.quiz.current];
+  const btns = document.querySelectorAll('.answer-btn');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+
+  if (idx === q.ans) {
+    document.getElementById(`ans${idx}`).classList.add('correct');
+    state.quiz.combo++;
+    state.quiz.maxCombo = Math.max(state.quiz.maxCombo, state.quiz.combo);
+    const xpGain = 10 + (state.quiz.combo > 1 ? (state.quiz.combo-1)*5 : 0);
+    state.quiz.score += 100 + (state.quiz.combo > 1 ? (state.quiz.combo-1)*20 : 0);
+    state.quiz.correct++;
+    state.quiz.xp += xpGain;
+    playSound('correct');
+    if (state.quiz.combo >= 3) {
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+    }
+  } else {
+    document.getElementById(`ans${idx}`).classList.add('wrong');
+    document.getElementById(`ans${q.ans}`).classList.add('correct');
+    state.quiz.lives--;
+    state.quiz.combo = 0;
+    playSound('wrong');
+    renderHearts('quizHearts', state.quiz.lives);
+    if (state.quiz.lives <= 0) {
+      setTimeout(() => endQuiz(), 1200);
+      return;
+    }
+  }
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function nextQuestion() {
+  state.quiz.current++;
+  if (state.quiz.current >= 10 || state.quiz.current >= state.quiz.questions.length) {
+    endQuiz();
+  } else {
+    renderQuestion();
+  }
+  playSound('click');
+}
+
+// ===== END QUIZ =====
+function endQuiz() {
+  // Save to progress
+  state.progress.totalXP += state.quiz.xp;
+  state.progress.level = Math.floor(state.progress.totalXP / 200) + 1;
+
+  // Add score to leaderboard
+  state.progress.scores.push({
+    name: state.player.name,
+    avatar: avatars[state.player.avatar].emoji,
+    score: state.quiz.score,
+    subject: state.selected.subjectName,
+    date: new Date().toLocaleDateString('id-ID')
+  });
+  state.progress.scores.sort((a,b) => b.score - a.score);
+  state.progress.scores = state.progress.scores.slice(0, 10);
+
+  // Check badges
+  const earned = [];
+  const subMap = { math:'Ahli Matematika 🔢', ina:'Penulis Hebat ✍️', ipas:'Penjelajah Sains 🔭', eng:'Bintang Bahasa Inggris 🌍', paibp:'Pelajar Islami ☪️', seni:'Seniman Nusantara 🎨', ppkn:'Pahlawan Pancasila 🇮🇩' };
+  if (state.quiz.correct >= 7 && subMap[state.selected.subject]) earned.push(subMap[state.selected.subject]);
+  if (state.quiz.correct === 10) earned.push('Sempurna! 💯');
+  if (state.quiz.maxCombo >= 5) earned.push('Kombo Master 🔥');
+  earned.forEach(b => { if (!state.progress.badges.includes(b)) { state.progress.badges.push(b); playSound('badge'); } });
+
+  localStorage.setItem('eduverse_progress', JSON.stringify(state.progress));
+
+  // Render score screen
+  goTo('scoreScreen');
+  confetti({ particleCount: 120, spread: 100, origin: { y: 0.6 } });
+
+  const pct = state.quiz.correct / 10;
+  document.getElementById('finalScore').textContent = state.quiz.score;
+  document.getElementById('correctCount').textContent = `${state.quiz.correct}/10`;
+  document.getElementById('earnedXP').textContent = `+${state.quiz.xp}`;
+  document.getElementById('maxCombo').textContent = state.quiz.maxCombo;
+
+  if (pct === 1) { document.getElementById('scoreTitle').textContent = 'SEMPURNA! 🌟'; document.getElementById('scoreEmoji').textContent = '🏆'; document.getElementById('scoreSubtitle').textContent = 'Luar biasa! Kamu mendapat nilai sempurna!'; }
+  else if (pct >= 0.7) { document.getElementById('scoreTitle').textContent = 'Bagus Sekali!'; document.getElementById('scoreEmoji').textContent = '⭐'; document.getElementById('scoreSubtitle').textContent = 'Kamu sangat pintar! Terus semangat!'; }
+  else if (pct >= 0.5) { document.getElementById('scoreTitle').textContent = 'Cukup Bagus!'; document.getElementById('scoreEmoji').textContent = '👍'; document.getElementById('scoreSubtitle').textContent = 'Kamu sudah berusaha! Coba lagi ya!'; }
+  else { document.getElementById('scoreTitle').textContent = 'Terus Belajar!'; document.getElementById('scoreEmoji').textContent = '💪'; document.getElementById('scoreSubtitle').textContent = 'Jangan menyerah! Pelajari lagi materinya!'; }
+
+  // XP bar
+  const xpInLevel = state.progress.totalXP % 200;
+  setTimeout(() => { document.getElementById('xpBar').style.width = `${(xpInLevel/200)*100}%`; }, 300);
+  document.getElementById('levelInfo').textContent = `Level ${state.progress.level} • ${xpInLevel}/200 XP`;
+
+  // Badges
+  const badgeEl = document.getElementById('badgeList');
+  if (state.progress.badges.length === 0) {
+    badgeEl.innerHTML = '<p style="color:rgba(255,255,255,0.5);" class="text-sm">Jawab 7+ soal benar untuk mendapatkan badge! 🏅</p>';
+  } else {
+    badgeEl.innerHTML = state.progress.badges.slice(-6).map(b => `
+      <div class="badge-item earned glass rounded-xl px-3 py-2 text-white text-sm font-semibold">${b}</div>
+    `).join('');
+  }
+
+  // Leaderboard
+  const lb = document.getElementById('leaderboard');
+  const top5 = state.progress.scores.slice(0,5);
+  if (top5.length === 0) {
+    lb.innerHTML = '<p style="color:rgba(255,255,255,0.5);" class="text-sm text-center">Belum ada data leaderboard</p>';
+  } else {
+    lb.innerHTML = top5.map((s,i) => `
+      <div class="lb-row flex items-center gap-3 py-2 border-b" style="border-color:rgba(255,255,255,0.1);">
+        <div class="lb-rank w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+          style="${i===0?'background:linear-gradient(135deg,#f59e0b,#d97706)':i===1?'background:linear-gradient(135deg,#9ca3af,#6b7280)':i===2?'background:linear-gradient(135deg,#cd7c2f,#a16207)':'background:rgba(255,255,255,0.2)'}">${i+1}</div>
+        <span class="text-xl flex-shrink-0">${s.avatar}</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-white font-semibold text-sm truncate">${s.name}</p>
+          <p class="text-xs truncate" style="color:rgba(255,255,255,0.5);">${s.subject}</p>
+        </div>
+        <span class="text-yellow-400 font-bold flex-shrink-0">${s.score.toLocaleString()}</span>
+      </div>
+    `).join('');
+  }
+}
+
+// ===== CERTIFICATE =====
+function showCertificate() {
+  goTo('certScreen');
+  document.getElementById('certName').textContent = state.player.name;
+  document.getElementById('certClass').textContent = `Kelas ${state.player.class} • ${state.selected.subjectName} – ${state.selected.materiName}`;
+  document.getElementById('certScore').textContent = state.quiz.score.toLocaleString();
+  document.getElementById('certBadge').textContent = state.progress.badges.length;
+  document.getElementById('certDate').textContent = new Date().toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('certBadgeList').innerHTML = state.progress.badges.slice(-4).map(b=>`<span class="glass rounded-lg px-2 py-1 text-white text-xs">${b}</span>`).join('');
+  confetti({ particleCount: 80, spread: 80, origin:{y:0.5} });
+}
+
+// ===== INIT =====
+createParticles();
+renderAvatars();
+// If player already has a name (e.g. page reload), show quick reset on splash
+if (state.player.name) {
+  document.getElementById('splashQuickReset').classList.remove('hidden');
+  document.getElementById('splashPlayerName').textContent = state.player.name;
+  document.getElementById('splashAvatarEmoji').textContent = avatars[state.player.avatar]?.emoji || '🧑‍🚀';
+}
+</script>
+</body>
+</html>
